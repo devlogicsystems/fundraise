@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card form-container">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label" for="id_name">Draft Name *</label>
+            {{ form.name }}
+            <p class="form-help">Unique identifier (e.g., "pitchdeck", "intro_email"). Used in chatbot commands.</p>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="id_subject">Subject *</label>
+            {{ form.subject }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="id_body">Body *</label>
+            {{ form.body }}
+            <p class="form-help">Email content. HTML is supported for rich formatting.</p>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Attach Artifacts</label>
+            {{ form.artifacts }}
+            <p class="form-help">Select artifacts to attach when sending this draft.</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="message message-error">
+            {% for field, errors in form.errors.items %}
+            <strong>{{ field }}:</strong> {{ errors|join:", " }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{% if draft %}Update{% else %}Create{% endif %} Draft</button>
+            <a href="{% url 'draft_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

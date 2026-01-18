@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card form-container">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label" for="id_investor">Investor *</label>
+            {{ form.investor }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="id_communication">Related Communication</label>
+            {{ form.communication }}
+            <p class="form-help">Select the email communication this response is for.</p>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="id_response_status">Response Status *</label>
+            {{ form.response_status }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="id_amount_offered">Amount Offered (₹)</label>
+            {{ form.amount_offered }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="id_response_date">Response Date *</label>
+            {{ form.response_date }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="id_notes">Notes</label>
+            {{ form.notes }}
+        </div>
+
+        {% if form.errors %}
+        <div class="message message-error">
+            {% for field, errors in form.errors.items %}
+            <strong>{{ field }}:</strong> {{ errors|join:", " }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{% if response %}Update{% else %}Record{% endif %}
+                Response</button>
+            <a href="{% url 'response_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">{{ total_investors }}</div>
+        <div class="stat-label">Total Investors</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📎</div>
+        <div class="stat-value">{{ total_artifacts }}</div>
+        <div class="stat-label">Artifacts</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value">{{ total_drafts }}</div>
+        <div class="stat-label">Email Drafts</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📧</div>
+        <div class="stat-value">{{ total_emails_sent }}</div>
+        <div class="stat-label">Emails Sent</div>
+    </div>
+</div>
+
+<!-- Email Aging Analysis -->
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card-header">
+        <h3 class="card-title">📊 Email Aging Analysis</h3>
+    </div>
+    <div class="aging-grid">
+        <div class="aging-card">
+            <div class="aging-period">Last 7 Days</div>
+            <div class="aging-count">{{ emails_7_days }}</div>
+        </div>
+        <div class="aging-card">
+            <div class="aging-period">8-15 Days</div>
+            <div class="aging-count">{{ emails_15_days }}</div>
+        </div>
+        <div class="aging-card">
+            <div class="aging-period">16-30 Days</div>
+            <div class="aging-count">{{ emails_30_days }}</div>
+        </div>
+        <div class="aging-card">
+            <div class="aging-period">Older than 30 Days</div>
+            <div class="aging-count">{{ emails_older }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Response/Funding Stats -->
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card-header">
+        <h3 class="card-title">💰 Response & Funding Analytics</h3>
+    </div>
+    <div class="response-stats">
+        <div class="response-stat success">
+            <div class="response-stat-title">Success</div>
+            <div class="response-stat-count">{{ response_data.success.count }}</div>
+            <div class="response-stat-amount">₹{{ response_data.success.amount|floatformat:0 }}</div>
+        </div>
+        <div class="response-stat failure">
+            <div class="response-stat-title">Failure</div>
+            <div class="response-stat-count">{{ response_data.failure.count }}</div>
+            <div class="response-stat-amount">₹{{ response_data.failure.amount|floatformat:0 }}</div>
+        </div>
+        <div class="response-stat pending">
+            <div class="response-stat-title">Pending</div>
+            <div class="response-stat-count">{{ response_data.pending.count }}</div>
+            <div class="response-stat-amount">₹{{ response_data.pending.amount|floatformat:0 }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Communications -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">📧 Recent Communications</h3>
+        <a href="{% url 'communication_list' %}" class="btn btn-secondary btn-sm">View All</a>
+    </div>
+    {% if recent_communications %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Investor</th>
+                    <th>Draft</th>
+                    <th>Status</th>
+                    <th>Sent At</th>
+                    <th>Sent By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comm in recent_communications %}
+                <tr>
+                    <td>
+                        <a href="{% url 'investor_detail' comm.investor.id %}">{{ comm.investor.name }}</a>
+                    </td>
+                    <td>{{ comm.draft.name|default:"Custom Email" }}</td>
+                    <td>
+                        <span class="badge badge-{{ comm.status }}">{{ comm.status }}</span>
+                    </td>
+                    <td>{{ comm.sent_at|date:"M d, Y H:i" }}</td>
+                    <td>{{ comm.sent_by.username|default:"System" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📧</div>
+        <div class="empty-state-title">No communications yet</div>
+        <div class="empty-state-text">Start by sending emails to your investors using the chatbot!</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Chatbot -->
+<div class="chatbot-container">
+    <div class="chatbot-toggle">🤖</div>
+    <div class="chatbot-window">
+        <div class="chatbot-header">
+            <span class="chatbot-title">🤖 AI Assistant</span>
+            <span class="chatbot-close">×</span>
+        </div>
+        <div class="chatbot-messages"></div>
+        <div class="chatbot-input-container">
+            <input type="text" class="chatbot-input" placeholder="Type your message...">
+            <button class="chatbot-send">Send</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fundraise{% endblock %} | Startup Fundraising Platform</title>
+    <meta name="description" content="Track investor communications and manage your startup fundraising">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% load static %}{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">💰 Fundraise</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'investor_list' %}" class="nav-item {% if 'investor' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">👥</span>
+                    <span>Investors</span>
+                </a>
+                <a href="{% url 'artifact_list' %}" class="nav-item {% if 'artifact' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">📎</span>
+                    <span>Artifacts</span>
+                </a>
+                <a href="{% url 'draft_list' %}" class="nav-item {% if 'draft' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">📝</span>
+                    <span>Email Drafts</span>
+                </a>
+                <a href="{% url 'response_list' %}" class="nav-item {% if 'response' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">💬</span>
+                    <span>Responses</span>
+                </a>
+                <a href="{% url 'communication_list' %}" class="nav-item {% if 'communication' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">📧</span>
+                    <span>Communications</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-icon">👤</span>
+                    <span class="user-name">{{ user.username }}</span>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h2 class="page-title">{% block page_title %}Dashboard{% endblock %}</h2>
+                <div class="header-actions">
+                    {% block header_actions %}{% endblock %}
+                </div>
+            </header>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="message message-{{ message.tags }}">
+                    {{ message }}
+                    <button class="message-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="content-area">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    {% else %}
+    <div class="auth-container">
+        {% block auth_content %}{% endblock %}
+    </div>
+    {% endif %}
+
+    <script src="{% load static %}{% static 'js/chatbot.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

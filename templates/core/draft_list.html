@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Email Drafts{% endblock %}
+{% block page_title %}Email Drafts{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'draft_create' %}" class="btn btn-primary">+ Create Draft</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if drafts %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Subject</th>
+                    <th>Artifacts</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for draft in drafts %}
+                <tr>
+                    <td><strong>{{ draft.name }}</strong></td>
+                    <td>{{ draft.subject|truncatewords:10 }}</td>
+                    <td>{{ draft.artifacts.count }} attached</td>
+                    <td>{{ draft.created_date|date:"M d, Y" }}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="{% url 'draft_edit' draft.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                            <a href="{% url 'draft_delete' draft.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📝</div>
+        <div class="empty-state-title">No email drafts</div>
+        <div class="empty-state-text">Create reusable email templates to quickly send to investors!</div>
+        <a href="{% url 'draft_create' %}" class="btn btn-primary">+ Create Draft</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

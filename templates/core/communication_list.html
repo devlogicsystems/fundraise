@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Communications{% endblock %}
+{% block page_title %}Communication Logs{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if communications %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Investor</th>
+                    <th>Draft</th>
+                    <th>Status</th>
+                    <th>Sent At</th>
+                    <th>Sent By</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comm in communications %}
+                <tr>
+                    <td>{{ comm.id }}</td>
+                    <td>
+                        <a href="{% url 'investor_detail' comm.investor.id %}">{{ comm.investor.name }}</a>
+                    </td>
+                    <td>{{ comm.draft.name|default:"Custom Email" }}</td>
+                    <td><span class="badge badge-{{ comm.status }}">{{ comm.status }}</span></td>
+                    <td>{{ comm.sent_at|date:"M d, Y H:i" }}</td>
+                    <td>{{ comm.sent_by.username|default:"System" }}</td>
+                    <td>{{ comm.notes|truncatewords:8 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📧</div>
+        <div class="empty-state-title">No communications yet</div>
+        <div class="empty-state-text">Start sending emails to investors using the chatbot on the dashboard!</div>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

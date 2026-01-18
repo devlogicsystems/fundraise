@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Responses{% endblock %}
+{% block page_title %}Funding Responses{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'response_create' %}" class="btn btn-primary">+ Record Response</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filter -->
+<form method="get" class="search-bar">
+    <select name="status" class="form-select" style="width: auto;">
+        <option value="">All Statuses</option>
+        {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if value == status_filter %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-secondary">Filter</button>
+    {% if status_filter %}
+    <a href="{% url 'response_list' %}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+</form>
+
+<div class="card">
+    {% if responses %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Investor</th>
+                    <th>Status</th>
+                    <th>Amount Offered</th>
+                    <th>Response Date</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for response in responses %}
+                <tr>
+                    <td>
+                        <a href="{% url 'investor_detail' response.investor.id %}">{{ response.investor.name }}</a>
+                    </td>
+                    <td><span class="badge badge-{{ response.response_status }}">{{ response.response_status }}</span>
+                    </td>
+                    <td>₹{{ response.amount_offered|floatformat:0 }}</td>
+                    <td>{{ response.response_date|date:"M d, Y" }}</td>
+                    <td>{{ response.notes|truncatewords:10 }}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="{% url 'response_edit' response.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                            <a href="{% url 'response_delete' response.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">💬</div>
+        <div class="empty-state-title">No responses recorded</div>
+        <div class="empty-state-text">Record investor responses to track your funding progress!</div>
+        <a href="{% url 'response_create' %}" class="btn btn-primary">+ Record Response</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

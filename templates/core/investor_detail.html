@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ investor.name }}{% endblock %}
+{% block page_title %}Investor Details{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'investor_edit' investor.id %}" class="btn btn-secondary">Edit</a>
+<a href="{% url 'investor_delete' investor.id %}" class="btn btn-danger">Delete</a>
+{% endblock %}
+
+{% block content %}
+<div class="detail-grid">
+    <!-- Investor Info -->
+    <div class="detail-section">
+        <h3 class="detail-section-title">👤 Investor Information</h3>
+
+        <div class="detail-row">
+            <span class="detail-label">ID:</span>
+            <span class="detail-value">{{ investor.id }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Name:</span>
+            <span class="detail-value">{{ investor.name }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ investor.email }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Amount:</span>
+            <span class="detail-value">₹{{ investor.amount|floatformat:0 }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Labels:</span>
+            <span class="detail-value">
+                <div class="labels-list">
+                    {% for label in investor.get_labels_list %}
+                    <span class="label-tag">{{ label }}</span>
+                    {% empty %}
+                    <span>No labels</span>
+                    {% endfor %}
+                </div>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Address:</span>
+            <span class="detail-value">{{ investor.address|default:"Not provided" }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Details:</span>
+            <span class="detail-value">{{ investor.details|default:"Not provided" }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Created:</span>
+            <span class="detail-value">{{ investor.created_date|date:"M d, Y H:i" }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Updated:</span>
+            <span class="detail-value">{{ investor.last_updated_on|date:"M d, Y H:i" }} by {{
+                investor.updated_by|default:"Unknown" }}</span>
+        </div>
+    </div>
+
+    <!-- Communication History -->
+    <div class="detail-section">
+        <h3 class="detail-section-title">📧 Communication History</h3>
+
+        {% if communications %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Draft</th>
+                        <th>Status</th>
+                        <th>Sent At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comm in communications %}
+                    <tr>
+                        <td>{{ comm.draft.name|default:"Custom" }}</td>
+                        <td><span class="badge badge-{{ comm.status }}">{{ comm.status }}</span></td>
+                        <td>{{ comm.sent_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state" style="padding: 30px 10px;">
+            <div class="empty-state-text">No communications yet</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Funding Responses -->
+<div class="card" style="margin-top: 24px;">
+    <div class="card-header">
+        <h3 class="card-title">💰 Funding Responses</h3>
+        <a href="{% url 'response_create' %}" class="btn btn-primary btn-sm">+ Add Response</a>
+    </div>
+
+    {% if responses %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Amount Offered</th>
+                    <th>Response Date</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for response in responses %}
+                <tr>
+                    <td><span class="badge badge-{{ response.response_status }}">{{ response.response_status }}</span>
+                    </td>
+                    <td>₹{{ response.amount_offered|floatformat:0 }}</td>
+                    <td>{{ response.response_date|date:"M d, Y" }}</td>
+                    <td>{{ response.notes|truncatewords:10 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state" style="padding: 30px 10px;">
+        <div class="empty-state-text">No responses recorded</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

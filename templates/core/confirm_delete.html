@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete{% endblock %}
+{% block page_title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="card confirm-delete">
+    <div class="confirm-delete-icon">⚠️</div>
+    <h2 class="confirm-delete-title">Delete {{ type|title }}?</h2>
+    <p class="confirm-delete-text">
+        Are you sure you want to delete <strong>{{ object }}</strong>?<br>
+        This action cannot be undone.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions" style="justify-content: center;">
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
