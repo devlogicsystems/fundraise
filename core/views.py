@@ -167,11 +167,25 @@ def chatbot_api(request):
             
             # Clean data for JSON serialization
             if 'data' in response:
+                # Handle single investor object (from send email)
+                if 'investor' in response['data'] and response['data']['investor']:
+                    inv = response['data']['investor']
+                    response['data']['investor'] = {
+                        'id': inv.id, 'name': inv.name, 'email': inv.email, 'amount': float(inv.amount)
+                    }
+                # Handle single draft object (from send email)
+                if 'draft' in response['data'] and response['data']['draft']:
+                    draft = response['data']['draft']
+                    response['data']['draft'] = {
+                        'id': draft.id, 'name': draft.name, 'subject': draft.subject
+                    }
+                # Handle investors list (from search)
                 if 'investors' in response['data']:
                     response['data']['investors'] = [
                         {'id': inv.id, 'name': inv.name, 'email': inv.email, 'amount': float(inv.amount)}
                         for inv in response['data']['investors']
                     ]
+                # Handle artifacts list (from search)
                 if 'artifacts' in response['data']:
                     response['data']['artifacts'] = [
                         {'id': art.id, 'name': art.name, 'type': art.artifact_type}
